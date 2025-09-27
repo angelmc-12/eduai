@@ -6,6 +6,7 @@ from google import genai
 from google.genai import types
 from google.api_core import retry
 import os
+import re
 
 # ========================
 # Configuración de Gemini
@@ -16,11 +17,11 @@ client = genai.Client(api_key=GOOGLE_API_KEY)
 # ========================
 # Base de datos SQLite
 # ========================
-DB_NAME = "chat_memory.db"
+DB_NAME = "lesson_memory.db"
 conn = sqlite3.connect(DB_NAME, check_same_thread=False)
 cursor = conn.cursor()
 cursor.execute("""
-CREATE TABLE IF NOT EXISTS chat_history (
+CREATE TABLE IF NOT EXISTS lesson_history (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     session_id TEXT,
     role TEXT,
@@ -32,14 +33,14 @@ conn.commit()
 
 def save_message(session_id, role, content):
     cursor.execute(
-        "INSERT INTO chat_history (session_id, role, content) VALUES (?, ?, ?)", 
+        "INSERT INTO lesson_history (session_id, role, content) VALUES (?, ?, ?)", 
         (session_id, role, content)
     )
     conn.commit()
 
-def get_recent_history(session_id, n_turns=5):
+def get_recent_history(session_id, n_turns=3):
     cursor.execute("""
-        SELECT role, content FROM chat_history 
+        SELECT role, content FROM lesson_history 
         WHERE session_id=? 
         ORDER BY id DESC LIMIT ?
     """, (session_id, n_turns*2))
@@ -47,7 +48,7 @@ def get_recent_history(session_id, n_turns=5):
     return list(reversed(rows))
 
 # ========================
-# ChromaDB con información de Techy
+# ChromaDB con currículo escolar
 # ========================
 class GeminiEmbeddingFunction(chromadb.EmbeddingFunction):
     document_mode = True
@@ -64,71 +65,105 @@ class GeminiEmbeddingFunction(chromadb.EmbeddingFunction):
 embed_fn = GeminiEmbeddingFunction()
 chroma_client = chromadb.Client()
 knowledge_db = chroma_client.get_or_create_collection(
-    name="techy_docs", embedding_function=embed_fn
+    name="curriculo_secundaria", embedding_function=embed_fn
 )
 
-# Documentos de ejemplo sobre Techy (puedes ampliarlos si quieres más contexto)
+# Documentos curriculares (ejemplo resumido, aquí deberías cargar todo el detalle que compartiste)
 documents = [
-    "Techy es una ONG peruana fundada por Angel, Brisa y Max enfocada en educación en ciencia de datos y tecnologías emergentes.",
-    "Misión: democratizar el acceso al conocimiento en ciencia de datos y machine learning para jóvenes de sectores menos favorecidos.",
-    "Visión: formar una generación de científicos de datos peruanos que aporten soluciones innovadoras a problemas locales y globales.",
-    "Programas escolares: introducción a Python, fundamentos de machine learning, proyectos aplicados, retos gamificados.",
-    "Programa universitario: malla curricular en Python, Numpy, Pandas, visualización y machine learning. Duración: 8 sesiones con reto final.",
-    "Programa voluntarios: formación de formadores, inducción sobre Techy, creación de FAQs y guías.",
-    "Áreas de gestión: innovación educativa, alianzas estratégicas, operaciones y finanzas, evaluación y seguimiento.",
-    "Estrategias pedagógicas: gamificación, aprendizaje basado en proyectos, mentoría personalizada y capacitación docente.",
-    "Desafíos: financiamiento sostenible, brecha digital, retención de estudiantes y construcción de credibilidad.",
-    "Fortalezas: fundadores expertos en data science, claridad en misión y visión, enfoque innovador, red de contactos educativos y tecnológicos.",
-    "Próximos pasos: finalizar malla curricular del piloto, alianzas con colegios y ONGs, ejecutar piloto universitario, elaborar reportes de impacto."
+    "Competencia: Resuelve problemas de cantidad. Capacidades: Traduce cantidades a expresiones numéricas, comunica su comprensión de los números, usa estrategias de cálculo, argumenta relaciones numéricas.",
+    "Competencia: Resuelve problemas de regularidad, equivalencia y cambios. Capacidades: Traduce datos a expresiones algebraicas, comunica relaciones algebraicas, usa estrategias para simplificar y resolver, argumenta equivalencias.",
+    "Competencia: Resuelve problemas de forma, movimiento y localización. Capacidades: Modela objetos con formas geométricas, comunica comprensión de relaciones geométricas, usa estrategias para orientarse en el espacio, argumenta propiedades geométricas.",
+    "Competencia: Resuelve problemas de gestión de datos e incertidumbre. Capacidades: Representa datos con gráficos y medidas estadísticas, comunica comprensión estadística, usa estrategias para recopilar y procesar datos, sustenta conclusiones basadas en la información.",
+    "Procesos didácticos de Matemática: 1. Comprensión del problema, 2. Búsqueda y ejecución de estrategias, 3. Socializa sus representaciones, 4. Reflexión y formalización, 5. Planteamiento de otros problemas."
 ]
 knowledge_db.add(documents=documents, ids=[str(i) for i in range(len(documents))])
 
 # ========================
-# Motor de conversación
+# Procesar mensaje docente
 # ========================
-def build_prompt(session_id, user_query, retrieved_docs):
-    history = get_recent_history(session_id, n_turns=5)
-    prompt = "Eres un asistente especializado en Techy, una ONG peruana de educación en ciencia de datos. Usa el historial y los documentos para responder en español, con un tono claro e inspirador.\n\n"
+def parse_teacher_message(message: str):
+    # Buscamos campos en el texto
+    tema = re.search(r"Tema:\s*(.*)", message)
+    competencia = re.search(r"Competencia:\s*(.*)", message)
+    grado = re.search(r"Grado:\s*(.*)", message)
+    contexto = re.search(r"Contexto:\s*(.*)", message)
+    duracion = re.search(r"Duración:\s*(.*)", message)
+
+    return {
+        "tema": tema.group(1).strip() if tema else "",
+        "competencia": competencia.group(1).strip() if competencia else "",
+        "grado": grado.group(1).strip() if grado else "",
+        "contexto": contexto.group(1).strip() if contexto else "",
+        "duracion": duracion.group(1).strip() if duracion else "2 horas"
+    }
+
+# ========================
+# Construcción del prompt
+# ========================
+def build_prompt(session_id, inputs, retrieved_docs):
+    history = get_recent_history(session_id, n_turns=2)
+    prompt = (
+        "Eres un asistente pedagógico experto en Matemática del currículo peruano. "
+        "Genera una propuesta de sesión completa para secundaria, organizada en procesos didácticos. "
+        "Estructura el plan con: 1. Comprensión del problema, 2. Búsqueda y ejecución de estrategias, "
+        "3. Socializa sus representaciones, 4. Reflexión y formalización, 5. Planteamiento de otros problemas. "
+        "Incluye criterios de evaluación claros y contextualiza las actividades al aula descrita.\n\n"
+    )
+
+    # Añadimos historial
     for role, content in history:
         prompt += f"{role.capitalize()}: {content}\n"
-    prompt += f"\nPregunta actual del usuario: {user_query}\n\n"
+
+    # Añadimos inputs del docente
+    prompt += f"\nTema: {inputs['tema']}\n"
+    prompt += f"Competencia: {inputs['competencia']}\n"
+    prompt += f"Grado: {inputs['grado']}\n"
+    prompt += f"Contexto del aula: {inputs['contexto']}\n"
+    prompt += f"Duración: {inputs['duracion']}\n\n"
+
     if retrieved_docs:
-        prompt += "Pasajes relevantes recuperados:\n"
+        prompt += "Referencias curriculares relevantes:\n"
         for doc in retrieved_docs:
             prompt += f"- {doc}\n"
+
     return prompt
 
-def conversational_rag(session_id, user_query):
-    save_message(session_id, "user", user_query)
+def generate_lesson(session_id, message):
+    inputs = parse_teacher_message(message)
+    query_text = f"{inputs['tema']} {inputs['competencia']} {inputs['grado']}"
+    
     embed_fn.document_mode = False
-    result = knowledge_db.query(query_texts=[user_query], n_results=3)
+    result = knowledge_db.query(query_texts=[query_text], n_results=3)
     retrieved_docs = result["documents"][0] if result["documents"] else []
-    prompt = build_prompt(session_id, user_query, retrieved_docs)
+
+    prompt = build_prompt(session_id, inputs, retrieved_docs)
     response = client.models.generate_content(
         model="gemini-2.0-flash",
         contents=prompt
     )
-    answer = response.text
-    save_message(session_id, "bot", answer)
-    return answer
+    lesson_plan = response.text
+
+    save_message(session_id, "user", message)
+    save_message(session_id, "bot", lesson_plan)
+    return lesson_plan
 
 # ========================
-# API FastAPI (adaptado a Twilio)
+# API FastAPI (WhatsApp)
 # ========================
 app = FastAPI()
 
 @app.get("/")
 def home():
-    return {"status": "ok", "message": "Chatbot Techy corriendo 🚀"}
+    return {"status": "ok", "message": "Generador de sesiones educativas corriendo 🚀"}
 
 @app.post("/webhook")
 async def webhook(request: Request):
     form = await request.form()
     user_message = form.get("Body", "")
     session_id = form.get("From", "default_user")
-    
+
     if not user_message:
-        return PlainTextResponse("No recibí un mensaje válido 📭")
-    
-    answer = conversational_rag(session_id, user_message)
-    return PlainTextResponse(answer)
+        return PlainTextResponse("Por favor envía: Tema, Competencia, Grado y Contexto 📚")
+
+    lesson_plan = generate_lesson(session_id, user_message)
+    return PlainTextResponse(lesson_plan)
