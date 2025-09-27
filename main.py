@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import PlainTextResponse
+from fastapi.middleware.cors import CORSMiddleware
 import sqlite3
 import chromadb
 from google import genai
@@ -68,7 +69,7 @@ knowledge_db = chroma_client.get_or_create_collection(
     name="curriculo_secundaria", embedding_function=embed_fn
 )
 
-# Documentos curriculares (ejemplo resumido, aquí deberías cargar todo el detalle que compartiste)
+# Documentos curriculares (ejemplo resumido)
 documents = [
     "Competencia: Resuelve problemas de cantidad. Capacidades: Traduce cantidades a expresiones numéricas, comunica su comprensión de los números, usa estrategias de cálculo, argumenta relaciones numéricas.",
     "Competencia: Resuelve problemas de regularidad, equivalencia y cambios. Capacidades: Traduce datos a expresiones algebraicas, comunica relaciones algebraicas, usa estrategias para simplificar y resolver, argumenta equivalencias.",
@@ -82,7 +83,6 @@ knowledge_db.add(documents=documents, ids=[str(i) for i in range(len(documents))
 # Procesar mensaje docente
 # ========================
 def parse_teacher_message(message: str):
-    # Buscamos campos en el texto
     tema = re.search(r"Tema:\s*(.*)", message)
     competencia = re.search(r"Competencia:\s*(.*)", message)
     grado = re.search(r"Grado:\s*(.*)", message)
@@ -110,11 +110,9 @@ def build_prompt(session_id, inputs, retrieved_docs):
         "Incluye criterios de evaluación claros y contextualiza las actividades al aula descrita.\n\n"
     )
 
-    # Añadimos historial
     for role, content in history:
         prompt += f"{role.capitalize()}: {content}\n"
 
-    # Añadimos inputs del docente
     prompt += f"\nTema: {inputs['tema']}\n"
     prompt += f"Competencia: {inputs['competencia']}\n"
     prompt += f"Grado: {inputs['grado']}\n"
@@ -151,6 +149,21 @@ def generate_lesson(session_id, message):
 # API FastAPI (WhatsApp)
 # ========================
 app = FastAPI()
+
+# --- CORS Middleware ---
+origins = [
+    "http://localhost:3000",         # frontend local
+    "https://tudominio.vercel.app",  # frontend en Vercel (ajusta al tuyo real)
+    "*"  # permitir todos (solo en pruebas; mejor quitar en producción)
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 def home():
