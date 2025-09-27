@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Request
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 import sqlite3
 import chromadb
@@ -8,6 +8,7 @@ from google.genai import types
 from google.api_core import retry
 import os
 import re
+import json
 
 # ========================
 # Configuración de Gemini
@@ -71,11 +72,11 @@ knowledge_db = chroma_client.get_or_create_collection(
 
 # Documentos curriculares (ejemplo resumido)
 documents = [
-    "Competencia: Resuelve problemas de cantidad. Capacidades: Traduce cantidades a expresiones numéricas, comunica su comprensión de los números, usa estrategias de cálculo, argumenta relaciones numéricas.",
-    "Competencia: Resuelve problemas de regularidad, equivalencia y cambios. Capacidades: Traduce datos a expresiones algebraicas, comunica relaciones algebraicas, usa estrategias para simplificar y resolver, argumenta equivalencias.",
-    "Competencia: Resuelve problemas de forma, movimiento y localización. Capacidades: Modela objetos con formas geométricas, comunica comprensión de relaciones geométricas, usa estrategias para orientarse en el espacio, argumenta propiedades geométricas.",
-    "Competencia: Resuelve problemas de gestión de datos e incertidumbre. Capacidades: Representa datos con gráficos y medidas estadísticas, comunica comprensión estadística, usa estrategias para recopilar y procesar datos, sustenta conclusiones basadas en la información.",
-    "Procesos didácticos de Matemática: 1. Comprensión del problema, 2. Búsqueda y ejecución de estrategias, 3. Socializa sus representaciones, 4. Reflexión y formalización, 5. Planteamiento de otros problemas."
+    "Competencia: Resuelve problemas de cantidad. Capacidades: Traduce cantidades a expresiones numéricas...",
+    "Competencia: Resuelve problemas de regularidad, equivalencia y cambios...",
+    "Competencia: Resuelve problemas de forma, movimiento y localización...",
+    "Competencia: Resuelve problemas de gestión de datos e incertidumbre...",
+    "Procesos didácticos de Matemática: Comprensión del problema, Búsqueda y ejecución de estrategias, Socializa sus representaciones, Reflexión y formalización, Planteamiento de otros problemas."
 ]
 knowledge_db.add(documents=documents, ids=[str(i) for i in range(len(documents))])
 
@@ -100,20 +101,31 @@ def parse_teacher_message(message: str):
 # ========================
 # Construcción del prompt
 # ========================
-def build_prompt(session_id, inputs, retrieved_docs):
-    history = get_recent_history(session_id, n_turns=2)
+def build_prompt(inputs, retrieved_docs):
     prompt = (
         "Eres un asistente pedagógico experto en Matemática del currículo peruano. "
-        "Genera una propuesta de sesión completa para secundaria, organizada en procesos didácticos. "
-        "Estructura el plan con: 1. Comprensión del problema, 2. Búsqueda y ejecución de estrategias, "
-        "3. Socializa sus representaciones, 4. Reflexión y formalización, 5. Planteamiento de otros problemas. "
-        "Incluye criterios de evaluación claros y contextualiza las actividades al aula descrita.\n\n"
+        "Genera el entregable en formato JSON **válido** siguiendo exactamente esta estructura:\n\n"
+        "{\n"
+        '  "tema": "",\n'
+        '  "ciclo": "",\n'
+        '  "contexto": "",\n'
+        '  "horasClase": 2,\n'
+        '  "competenciasSeleccionadas": [],\n'
+        '  "materialesDisponibles": "",\n'
+        '  "competenciaDescripcion": "",\n'
+        '  "secuenciaMetodologica": {\n'
+        '    "inicio": "",\n'
+        '    "desarrollo": "",\n'
+        '    "cierre": ""\n'
+        '  },\n'
+        '  "procesosDidacticos": [],\n'
+        '  "materialesDidacticosSugeridos": [],\n'
+        '  "actividadesContextualizadas": [],\n'
+        '  "distribucionHoras": ""\n'
+        "}\n\n"
+        "Usa la información recibida para llenar los campos.\n\n"
     )
-
-    for role, content in history:
-        prompt += f"{role.capitalize()}: {content}\n"
-
-    prompt += f"\nTema: {inputs['tema']}\n"
+    prompt += f"Tema: {inputs['tema']}\n"
     prompt += f"Competencia: {inputs['competencia']}\n"
     prompt += f"Grado: {inputs['grado']}\n"
     prompt += f"Contexto del aula: {inputs['contexto']}\n"
@@ -134,29 +146,32 @@ def generate_lesson(session_id, message):
     result = knowledge_db.query(query_texts=[query_text], n_results=3)
     retrieved_docs = result["documents"][0] if result["documents"] else []
 
-    prompt = build_prompt(session_id, inputs, retrieved_docs)
+    prompt = build_prompt(inputs, retrieved_docs)
     response = client.models.generate_content(
         model="gemini-2.0-flash",
         contents=prompt
     )
-    lesson_plan = response.text
+
+    raw_output = response.text
+
+    # Validar que sea JSON
+    try:
+        lesson_json = json.loads(raw_output)
+    except json.JSONDecodeError:
+        # Si Gemini devuelve texto no válido, lo encapsulamos
+        lesson_json = {"error": "El modelo no devolvió un JSON válido", "raw": raw_output}
 
     save_message(session_id, "user", message)
-    save_message(session_id, "bot", lesson_plan)
-    return lesson_plan
+    save_message(session_id, "bot", json.dumps(lesson_json, ensure_ascii=False))
+    return lesson_json
 
 # ========================
-# API FastAPI (WhatsApp)
+# API FastAPI (WhatsApp / Frontend)
 # ========================
 app = FastAPI()
 
 # --- CORS Middleware ---
-origins = [
-    "http://localhost:3000",         # frontend local
-    "https://tudominio.vercel.app",  # frontend en Vercel (ajusta al tuyo real)
-    "*"  # permitir todos (solo en pruebas; mejor quitar en producción)
-]
-
+origins = ["*"]  # Ajusta en producción
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -176,7 +191,7 @@ async def webhook(request: Request):
     session_id = form.get("From", "default_user")
 
     if not user_message:
-        return PlainTextResponse("Por favor envía: Tema, Competencia, Grado y Contexto 📚")
+        return JSONResponse({"error": "Por favor envía: Tema, Competencia, Grado y Contexto 📚"})
 
     lesson_plan = generate_lesson(session_id, user_message)
-    return PlainTextResponse(lesson_plan)
+    return JSONResponse(lesson_plan)
