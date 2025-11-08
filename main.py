@@ -84,18 +84,21 @@ knowledge_db.add(documents=documents, ids=[str(i) for i in range(len(documents))
 # Procesar mensaje docente
 # ========================
 def parse_teacher_message(message: str):
+    """Extrae los campos enviados por el frontend como texto plano."""
     tema = re.search(r"Tema:\s*(.*)", message)
     competencia = re.search(r"Competencia:\s*(.*)", message)
     grado = re.search(r"Grado:\s*(.*)", message)
     contexto = re.search(r"Contexto:\s*(.*)", message)
     duracion = re.search(r"Duración:\s*(.*)", message)
+    materiales = re.search(r"Materiales:\s*(.*)", message)
 
     return {
         "tema": tema.group(1).strip() if tema else "",
         "competencia": competencia.group(1).strip() if competencia else "",
         "grado": grado.group(1).strip() if grado else "",
         "contexto": contexto.group(1).strip() if contexto else "",
-        "duracion": duracion.group(1).strip() if duracion else "2 horas"
+        "duracion": duracion.group(1).strip() if duracion else "2 horas",
+        "materiales": materiales.group(1).strip() if materiales else "",
     }
 
 # ========================
@@ -127,9 +130,10 @@ def build_prompt(inputs, retrieved_docs):
     )
     prompt += f"Tema: {inputs['tema']}\n"
     prompt += f"Competencia: {inputs['competencia']}\n"
-    prompt += f"Grado: {inputs['grado']}\n"
+    prompt += f"Grado o ciclo: {inputs['grado']}\n"
     prompt += f"Contexto del aula: {inputs['contexto']}\n"
-    prompt += f"Duración: {inputs['duracion']}\n\n"
+    prompt += f"Duración: {inputs['duracion']}\n"
+    prompt += f"Materiales disponibles: {inputs['materiales']}\n\n"
 
     if retrieved_docs:
         prompt += "Referencias curriculares relevantes:\n"
