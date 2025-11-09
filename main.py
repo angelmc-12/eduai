@@ -166,15 +166,63 @@ def build_prompt(inputs, retrieved_docs):
 
     return prompt
 
-def generate_lesson(session_id, message):
-    inputs = parse_teacher_message(message)
-    query_text = f"{inputs['tema']} {inputs['competencia']} {inputs['grado']}"
+# def generate_lesson(session_id, message):
+#     inputs = parse_teacher_message(message)
+#     query_text = f"{inputs['tema']} {inputs['competencia']} {inputs['grado']}"
     
+#     embed_fn.document_mode = False
+#     result = knowledge_db.query(query_texts=[query_text], n_results=3)
+#     retrieved_docs = result["documents"][0] if result["documents"] else []
+
+#     prompt = build_prompt(inputs, retrieved_docs)
+#     response = client.models.generate_content(
+#         model="gemini-2.0-flash",
+#         contents=prompt
+#     )
+
+#     raw_output = response.text
+
+#     # Validar que sea JSON
+#     try:
+#         lesson_json = json.loads(raw_output)
+#     except json.JSONDecodeError:
+#         # Si Gemini devuelve texto no válido, lo encapsulamos
+#         lesson_json = {"error": "El modelo no devolvió un JSON válido", "raw": raw_output}
+
+#     save_message(session_id, "user", message)
+#     save_message(session_id, "bot", json.dumps(lesson_json, ensure_ascii=False))
+#     return lesson_json
+
+def generate_lesson(session_id, message):
+    """
+    Genera una sesión de aprendizaje considerando todos los campos del mensaje docente.
+    Usa el tema, competencia, grado/ciclo, contexto, duración y materiales
+    para recuperar fragmentos relevantes del currículo y construir un prompt completo.
+    """
+
+    # --- Extraer los datos del mensaje ---
+    inputs = parse_teacher_message(message)
+
+    # --- Construir texto de búsqueda (usando todos los campos disponibles) ---
+    query_parts = [
+        inputs.get("tema", ""),
+        inputs.get("competencia", ""),
+        inputs.get("grado", ""),
+        inputs.get("contexto", ""),
+        inputs.get("duracion", ""),
+        inputs.get("materiales", "")
+    ]
+    query_text = " ".join(part for part in query_parts if part).strip()
+
+    # --- Buscar fragmentos relevantes en ChromaDB ---
     embed_fn.document_mode = False
-    result = knowledge_db.query(query_texts=[query_text], n_results=3)
+    result = knowledge_db.query(query_texts=[query_text], n_results=5)
     retrieved_docs = result["documents"][0] if result["documents"] else []
 
+    # --- Construir el prompt completo para Gemini ---
     prompt = build_prompt(inputs, retrieved_docs)
+
+    # --- Llamar al modelo de Gemini ---
     response = client.models.generate_content(
         model="gemini-2.0-flash",
         contents=prompt
@@ -182,15 +230,17 @@ def generate_lesson(session_id, message):
 
     raw_output = response.text
 
-    # Validar que sea JSON
+    # --- Validar y formatear el JSON devuelto ---
     try:
         lesson_json = json.loads(raw_output)
     except json.JSONDecodeError:
-        # Si Gemini devuelve texto no válido, lo encapsulamos
+        # Si el modelo devuelve texto no válido, lo encapsulamos para debugging
         lesson_json = {"error": "El modelo no devolvió un JSON válido", "raw": raw_output}
 
-    save_message(session_id, "user", message)
+    # --- Guardar historial de conversación ---
+    save_message(session_id, "user", json.dumps(inputs, ensure_ascii=False))
     save_message(session_id, "bot", json.dumps(lesson_json, ensure_ascii=False))
+
     return lesson_json
 
 # ========================
