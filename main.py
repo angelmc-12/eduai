@@ -90,8 +90,18 @@ text = response.text
 chunks = re.split(r'\n{2,}', text)  # separa por párrafos
 docs = [chunk.strip() for chunk in chunks if len(chunk.strip()) > 50]
 
+MAX_BATCH = 100
 ids = [f"frag_{i}" for i in range(len(docs))]
-knowledge_db.add(documents=docs, ids=ids)
+
+for i in range(0, len(docs), MAX_BATCH):
+    batch_docs = docs[i:i+MAX_BATCH]
+    batch_ids = ids[i:i+MAX_BATCH]
+    try:
+        knowledge_db.add(documents=batch_docs, ids=batch_ids)
+        print(f"✅ Lote {i//MAX_BATCH + 1} cargado ({len(batch_docs)} fragmentos)")
+        time.sleep(1)  # opcional, evita saturar la API
+    except Exception as e:
+        print(f"⚠️ Error en el lote {i//MAX_BATCH + 1}: {e}")
 
 # ========================
 # Procesar mensaje docente
