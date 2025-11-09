@@ -9,6 +9,7 @@ from google.api_core import retry
 import os
 import re
 import json
+import requests
 
 # ========================
 # Configuración de Gemini
@@ -71,14 +72,26 @@ knowledge_db = chroma_client.get_or_create_collection(
 )
 
 # Documentos curriculares (ejemplo resumido)
-documents = [
-    "Competencia: Resuelve problemas de cantidad. Capacidades: Traduce cantidades a expresiones numéricas...",
-    "Competencia: Resuelve problemas de regularidad, equivalencia y cambios...",
-    "Competencia: Resuelve problemas de forma, movimiento y localización...",
-    "Competencia: Resuelve problemas de gestión de datos e incertidumbre...",
-    "Procesos didácticos de Matemática: Comprensión del problema, Búsqueda y ejecución de estrategias, Socializa sus representaciones, Reflexión y formalización, Planteamiento de otros problemas."
-]
-knowledge_db.add(documents=documents, ids=[str(i) for i in range(len(documents))])
+# documents = [
+#     "Competencia: Resuelve problemas de cantidad. Capacidades: Traduce cantidades a expresiones numéricas...",
+#     "Competencia: Resuelve problemas de regularidad, equivalencia y cambios...",
+#     "Competencia: Resuelve problemas de forma, movimiento y localización...",
+#     "Competencia: Resuelve problemas de gestión de datos e incertidumbre...",
+#     "Procesos didácticos de Matemática: Comprensión del problema, Búsqueda y ejecución de estrategias, Socializa sus representaciones, Reflexión y formalización, Planteamiento de otros problemas."
+# ]
+# knowledge_db.add(documents=documents, ids=[str(i) for i in range(len(documents))])
+
+TXT_URL = "https://raw.githubusercontent.com/angelmc-12/myfirstrepo/master/curriculo_texto.txt"
+
+response = requests.get(TXT_URL, timeout=30)
+response.raise_for_status()
+
+text = response.text
+chunks = re.split(r'\n{2,}', text)  # separa por párrafos
+docs = [chunk.strip() for chunk in chunks if len(chunk.strip()) > 50]
+
+ids = [f"frag_{i}" for i in range(len(docs))]
+knowledge_db.add(documents=docs, ids=ids)
 
 # ========================
 # Procesar mensaje docente
