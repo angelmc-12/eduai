@@ -128,10 +128,56 @@ def parse_teacher_message(message: str):
 # ========================
 # Construcción del prompt
 # ========================
+# def build_prompt(inputs, retrieved_docs):
+#     prompt = (
+#         "Eres un asistente pedagógico experto en Matemática del currículo peruano. "
+#         "Genera el entregable en formato JSON **válido** siguiendo exactamente esta estructura:\n\n"
+#         "{\n"
+#         '  "tema": "",\n'
+#         '  "ciclo": "",\n'
+#         '  "contexto": "",\n'
+#         '  "horasClase": 2,\n'
+#         '  "competenciasSeleccionadas": [],\n'
+#         '  "materialesDisponibles": "",\n'
+#         '  "competenciaDescripcion": "",\n'
+#         '  "secuenciaMetodologica": {\n'
+#         '    "inicio": "",\n'
+#         '    "desarrollo": "",\n'
+#         '    "cierre": ""\n'
+#         '  },\n'
+#         '  "procesosDidacticos": [],\n'
+#         '  "materialesDidacticosSugeridos": [],\n'
+#         '  "actividadesContextualizadas": [],\n'
+#         '  "distribucionHoras": ""\n'
+#         "}\n\n"
+#         "Usa la información recibida para llenar los campos.\n\n"
+#     )
+#     prompt += f"Tema: {inputs['tema']}\n"
+#     prompt += f"Competencia: {inputs['competencia']}\n"
+#     prompt += f"Grado o ciclo: {inputs['grado']}\n"
+#     prompt += f"Contexto del aula: {inputs['contexto']}\n"
+#     prompt += f"Duración: {inputs['duracion']}\n"
+#     prompt += f"Materiales disponibles: {inputs['materiales']}\n\n"
+
+#     if retrieved_docs:
+#         prompt += "Referencias curriculares relevantes:\n"
+#         for doc in retrieved_docs:
+#             prompt += f"- {doc}\n"
+
+#     return prompt
+
 def build_prompt(inputs, retrieved_docs):
+    """
+    Construye el prompt que se enviará al modelo Gemini.
+    Toma en cuenta todos los campos del docente y el contenido curricular relevante.
+    """
+
     prompt = (
-        "Eres un asistente pedagógico experto en Matemática del currículo peruano. "
-        "Genera el entregable en formato JSON **válido** siguiendo exactamente esta estructura:\n\n"
+        "Actúa como un **asistente pedagógico experto en Matemática del Currículo Nacional Peruano**. "
+        "Tu tarea es ayudar a un docente de educación secundaria a **preparar su sesión de aprendizaje** de forma completa y contextualizada, "
+        "considerando las competencias, capacidades y enfoques pedagógicos oficiales del MINEDU Perú.\n\n"
+
+        "Genera el entregable en formato JSON **válido**, siguiendo exactamente esta estructura:\n\n"
         "{\n"
         '  "tema": "",\n'
         '  "ciclo": "",\n'
@@ -150,19 +196,38 @@ def build_prompt(inputs, retrieved_docs):
         '  "actividadesContextualizadas": [],\n'
         '  "distribucionHoras": ""\n'
         "}\n\n"
-        "Usa la información recibida para llenar los campos.\n\n"
+        "Requisitos de la respuesta:\n"
+        "- Usa lenguaje claro y profesional dirigido a docentes peruanos.\n"
+        "- Las actividades deben ser **coherentes con el contexto social y materiales disponibles**.\n"
+        "- Adecúa la dificultad y las estrategias pedagógicas al **grado o ciclo indicado**.\n"
+        "- Propón actividades contextualizadas al entorno del estudiante (por ejemplo, si es rural o urbano).\n"
+        "- Incluye ejemplos, situaciones problemáticas o contextos reales del entorno local.\n"
+        "- Si hay limitaciones de materiales, ofrece alternativas didácticas.\n"
+        "- Si la duración es corta (1-2 horas), prioriza una secuencia metodológica práctica.\n"
+        "- No devuelvas texto adicional fuera del JSON.\n\n"
     )
-    prompt += f"Tema: {inputs['tema']}\n"
-    prompt += f"Competencia: {inputs['competencia']}\n"
-    prompt += f"Grado o ciclo: {inputs['grado']}\n"
-    prompt += f"Contexto del aula: {inputs['contexto']}\n"
-    prompt += f"Duración: {inputs['duracion']}\n"
-    prompt += f"Materiales disponibles: {inputs['materiales']}\n\n"
 
+    # --- Información proporcionada por el docente ---
+    prompt += (
+        "Información del docente:\n"
+        f"- Tema: {inputs['tema']}\n"
+        f"- Competencia: {inputs['competencia']}\n"
+        f"- Grado o ciclo: {inputs['grado']}\n"
+        f"- Contexto del aula: {inputs['contexto']}\n"
+        f"- Duración: {inputs['duracion']}\n"
+        f"- Materiales disponibles: {inputs['materiales']}\n\n"
+    )
+
+    # --- Información curricular recuperada ---
     if retrieved_docs:
-        prompt += "Referencias curriculares relevantes:\n"
-        for doc in retrieved_docs:
-            prompt += f"- {doc}\n"
+        prompt += "Fragmentos relevantes del Currículo Nacional:\n"
+        for i, doc in enumerate(retrieved_docs, 1):
+            prompt += f"{i}. {doc.strip()}\n"
+        prompt += "\n"
+
+    prompt += (
+        "Ahora, genera el JSON completo con la sesión de aprendizaje contextualizada y lista para ser aplicada en el aula."
+    )
 
     return prompt
 
