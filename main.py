@@ -109,62 +109,40 @@ for i in range(0, len(docs), MAX_BATCH):
 # ========================
 def parse_teacher_message(message: str):
     """Extrae los campos enviados por el frontend como texto plano."""
-    tema = re.search(r"Tema:\s*(.*)", message)
-    competencia = re.search(r"Competencia:\s*(.*)", message)
+    titulo = re.search(r"Título:\s*(.*)", message)
+    docente = re.search(r"Docente:\s*(.*)", message)
+    fecha = re.search(r"Fecha:\s*(.*)", message)
     grado = re.search(r"Grado:\s*(.*)", message)
+    seccion = re.search(r"Sección:\s*(.*)", message)
+    competencias = re.search(r"Competencias:\s*(.*)", message)
+    capacidades = re.search(r"Capacidades:\s*(.*)", message)
+    ciclo = re.search(r"Ciclo:\s*(.*)", message)
     contexto = re.search(r"Contexto:\s*(.*)", message)
     duracion = re.search(r"Duración:\s*(.*)", message)
+    enfoque_transversal = re.search(r"Enfoque Transversal:\s*(.*)", message)
+    competencia_transversal = re.search(r"Competencia Transversal:\s*(.*)", message)
     materiales = re.search(r"Materiales:\s*(.*)", message)
 
     return {
-        "tema": tema.group(1).strip() if tema else "",
-        "competencia": competencia.group(1).strip() if competencia else "",
+        "titulo": titulo.group(1).strip() if titulo else "",
+        "docente": docente.group(1).strip() if docente else "",
+        "fecha": fecha.group(1).strip() if fecha else "",
         "grado": grado.group(1).strip() if grado else "",
+        "seccion": seccion.group(1).strip() if seccion else "",
+        "competencias": competencias.group(1).strip() if competencias else "",
+        "capacidades": capacidades.group(1).strip() if capacidades else "",
+        "ciclo": ciclo.group(1).strip() if ciclo else "",
         "contexto": contexto.group(1).strip() if contexto else "",
         "duracion": duracion.group(1).strip() if duracion else "2 horas",
+        "enfoque_transversal": enfoque_transversal.group(1).strip() if enfoque_transversal else "",
+        "competencia_transversal": competencia_transversal.group(1).strip() if competencia_transversal else "",
         "materiales": materiales.group(1).strip() if materiales else "",
     }
 
 # ========================
 # Construcción del prompt
 # ========================
-# def build_prompt(inputs, retrieved_docs):
-#     prompt = (
-#         "Eres un asistente pedagógico experto en Matemática del currículo peruano. "
-#         "Genera el entregable en formato JSON **válido** siguiendo exactamente esta estructura:\n\n"
-#         "{\n"
-#         '  "tema": "",\n'
-#         '  "ciclo": "",\n'
-#         '  "contexto": "",\n'
-#         '  "horasClase": 2,\n'
-#         '  "competenciasSeleccionadas": [],\n'
-#         '  "materialesDisponibles": "",\n'
-#         '  "competenciaDescripcion": "",\n'
-#         '  "secuenciaMetodologica": {\n'
-#         '    "inicio": "",\n'
-#         '    "desarrollo": "",\n'
-#         '    "cierre": ""\n'
-#         '  },\n'
-#         '  "procesosDidacticos": [],\n'
-#         '  "materialesDidacticosSugeridos": [],\n'
-#         '  "actividadesContextualizadas": [],\n'
-#         '  "distribucionHoras": ""\n'
-#         "}\n\n"
-#         "Usa la información recibida para llenar los campos.\n\n"
-#     )
-#     prompt += f"Tema: {inputs['tema']}\n"
-#     prompt += f"Competencia: {inputs['competencia']}\n"
-#     prompt += f"Grado o ciclo: {inputs['grado']}\n"
-#     prompt += f"Contexto del aula: {inputs['contexto']}\n"
-#     prompt += f"Duración: {inputs['duracion']}\n"
-#     prompt += f"Materiales disponibles: {inputs['materiales']}\n\n"
 
-#     if retrieved_docs:
-#         prompt += "Referencias curriculares relevantes:\n"
-#         for doc in retrieved_docs:
-#             prompt += f"- {doc}\n"
-
-#     return prompt
 
 def build_prompt(inputs, retrieved_docs):
     """
@@ -179,43 +157,157 @@ def build_prompt(inputs, retrieved_docs):
 
         "Genera el entregable en formato JSON **válido**, siguiendo exactamente esta estructura:\n\n"
         "{\n"
+        '  "datosGenerales": {\n'
+        '    "titulo": "",\n'
+        '    "docente": "",\n'
+        '    "fecha": "",\n'
+        '    "grado": "",\n'
+        '    "seccion": ""\n'
+        '  },\n'
         '  "tema": "",\n'
         '  "ciclo": "",\n'
         '  "contexto": "",\n'
         '  "horasClase": 2,\n'
         '  "competenciasSeleccionadas": [],\n'
+        '  "capacidades": [],\n'
         '  "materialesDisponibles": "",\n'
+        '  "enfoqueTransversal": "",\n'
+        '  "competenciaTransversal": "",\n'
         '  "competenciaDescripcion": "",\n'
+        '  "criteriosEvaluacion": "",\n'
+        '  "evidenciasAprendizaje": "",\n'
+        '  "propositoSesion": "",\n'
         '  "secuenciaMetodologica": {\n'
         '    "inicio": "",\n'
         '    "desarrollo": "",\n'
         '    "cierre": ""\n'
         '  },\n'
+        '  "distribucionHoras": "",\n'
         '  "procesosDidacticos": [],\n'
-        '  "materialesDidacticosSugeridos": [],\n'
         '  "actividadesContextualizadas": [],\n'
-        '  "distribucionHoras": ""\n'
+        '  "materialesDidacticosSugeridos": [],\n'
+        '  "recursosAdicionales": {\n'
+        '    "fichasDeTrabajo": [],\n'
+        '    "problemasYEjercicios": [],\n'
+        '    "juegoDidactico": {},\n'
+        '    "actividadDeActivacion": [],\n'
+        '    "evaluacionFormativa": {},\n'
+        '    "comunicadoParaPadres": "",\n'
+        '    "actividadesDiferenciadas": {\n'
+        '      "refuerzo": [],\n'
+        '      "consolidacion": [],\n'
+        '      "profundizacion": []\n'
+        '    }\n'
+        '  }\n'
         "}\n\n"
         "Requisitos de la respuesta:\n"
         "- Usa lenguaje claro y profesional dirigido a docentes peruanos.\n"
-        "- Las actividades deben ser **coherentes con el contexto social y materiales disponibles**.\n"
+        "- **RESPETA ESTRICTAMENTE la duración especificada** (1 hora pedagógica = 45 minutos).\n"
+        "- Las actividades deben ser **coherentes con el contexto sociocultural y materiales disponibles**.\n"
         "- Adecúa la dificultad y las estrategias pedagógicas al **grado o ciclo indicado**.\n"
-        "- Propón actividades contextualizadas al entorno del estudiante (por ejemplo, si es rural o urbano).\n"
-        "- Incluye ejemplos, situaciones problemáticas o contextos reales del entorno local.\n"
-        "- Si hay limitaciones de materiales, ofrece alternativas didácticas.\n"
-        "- Si la duración es corta (1-2 horas), prioriza una secuencia metodológica práctica.\n"
+        "- **CONTEXTUALIZACIÓN OBLIGATORIA**: TODAS las actividades deben relacionarse con el contexto sociocultural indicado:\n"
+        "  * Rural/Agrícola: cultivos, animales, terrenos, cosechas\n"
+        "  * Pesquero: capturas, redes, embarcaciones, mareas\n"
+        "  * Comercial: ventas, precios, descuentos, ganancias\n"
+        "  * Minero: minerales, excavaciones, volúmenes\n"
+        "  * Turístico: rutas, mapas, visitantes, costos\n"
+        "  * Urbano: transporte, edificios, tecnología, servicios\n"
+        "- La distribución del tiempo debe ser realista (Inicio: 15-20%, Desarrollo: 60-70%, Cierre: 10-15%).\n"
+        "- **Secuencia Metodológica Detallada**:\n"
+        "  * INICIO: motivación contextualizada, problematización, saberes previos, propósito (mínimo 3 párrafos)\n"
+        "  * DESARROLLO: situación problemática + 5 procesos didácticos de Matemática + trabajo variado (mínimo 5 párrafos)\n"
+        "  * CIERRE: metacognición, transferencia, evaluación formativa (mínimo 2 párrafos)\n"
+        "- **Procesos Didácticos de Matemática** (siempre en este orden):\n"
+        "  1. Familiarización con el problema\n"
+        "  2. Búsqueda y ejecución de estrategias\n"
+        "  3. Socialización de representaciones\n"
+        "  4. Reflexión y formalización\n"
+        "  5. Planteamiento de otros problemas\n"
+        "- **Criterios de Evaluación**: Deben ser observables, medibles y específicos para esta sesión.\n"
+        "- **Evidencias de Aprendizaje**: Productos concretos que generarán los estudiantes.\n"
+        "- **Propósito de la Sesión**: Claro, alcanzable y redactado en términos de lo que aprenderán.\n"
+        "- **Integrar Enfoques Transversales**: Incluir naturalmente el enfoque transversal en las actividades.\n"
+        "- **Integrar Competencia Transversal**: Si es TICs, sugerir tecnología; si es Aprendizaje Autónomo, incluir autoevaluación.\n"
+        "- Actividades progresivas en dificultad, factibles con los materiales disponibles.\n"
         "- No devuelvas texto adicional fuera del JSON.\n\n"
+        
+        "**RECURSOS ADICIONALES A INCLUIR:**\n"
+        "1. **fichasDeTrabajo**: Genera 2-3 fichas de trabajo con ejercicios progresivos (básico, intermedio, avanzado) relacionados al tema. "
+        "Cada ficha debe tener título, instrucciones claras y ejercicios específicos.\n\n"
+        
+        "2. **problemasYEjercicios**: Crea 5-8 problemas o ejercicios variados sobre el tema, incluyendo:\n"
+        "   - Problemas básicos de comprensión\n"
+        "   - Ejercicios de aplicación intermedia\n"
+        "   - Desafíos avanzados para estudiantes que necesitan mayor reto\n"
+        "   - Incluye las respuestas correctas y criterios de evaluación\n\n"
+        
+        "3. **juegoDidactico**: Diseña un juego educativo de 15-20 minutos que:\n"
+        "   - Use materiales simples disponibles en el aula (papel, plumones, dados, etc.)\n"
+        "   - Tenga instrucciones paso a paso\n"
+        "   - Incluya 3 niveles de dificultad\n"
+        "   - Fomente el trabajo colaborativo\n"
+        "   - Termine con reflexión grupal\n\n"
+        
+        "4. **actividadDeActivacion**: Proporciona 2-3 actividades de activación de saberes previos de 3-5 minutos para iniciar la clase. "
+        "Deben ser dinámicas y ayudar a conectar con conocimientos anteriores.\n\n"
+        
+        "5. **evaluacionFormativa**: Crea una evaluación formativa de 20-30 minutos que incluya:\n"
+        "   - 5-6 preguntas variadas (básicas, intermedias y avanzadas)\n"
+        "   - Respuestas correctas\n"
+        "   - Criterios de evaluación claros\n"
+        "   - Alineada con las competencias del CNEB\n\n"
+        
+        "6. **comunicadoParaPadres**: Elabora un breve mensaje (200-300 palabras) para padres de familia que:\n"
+        "   - Explique qué están aprendiendo sus hijos\n"
+        "   - Proporcione 2-3 estrategias sencillas para apoyar en casa\n"
+        "   - Use lenguaje cálido y motivador\n"
+        "   - Sea apropiado para enviar por WhatsApp (incluye emojis)\n\n"
+        
+        "7. **actividadesDiferenciadas**: Proporciona rutas de trabajo diferenciadas:\n"
+        "   - **refuerzo**: 2-3 actividades para estudiantes que necesitan consolidar conceptos básicos\n"
+        "   - **consolidacion**: 2-3 actividades para estudiantes en proceso de aprendizaje\n"
+        "   - **profundizacion**: 2-3 actividades desafiantes para estudiantes que ya dominan el tema\n\n"
     )
 
     # --- Información proporcionada por el docente ---
     prompt += (
-        "Información del docente:\n"
-        f"- Tema: {inputs['tema']}\n"
-        f"- Competencia: {inputs['competencia']}\n"
-        f"- Grado o ciclo: {inputs['grado']}\n"
-        f"- Contexto del aula: {inputs['contexto']}\n"
-        f"- Duración: {inputs['duracion']}\n"
+        "**DATOS GENERALES:**\n"
+        f"- Título: {inputs['titulo']}\n"
+        f"- Docente: {inputs['docente']}\n"
+        f"- Fecha: {inputs['fecha']}\n"
+        f"- Grado: {inputs['grado']}\n"
+        f"- Sección: {inputs['seccion']}\n\n"
+        
+        "**COMPETENCIAS Y CAPACIDADES:**\n"
+        f"- Competencias: {inputs['competencias']}\n"
+        f"- Capacidades: {inputs['capacidades']}\n\n"
+        
+        "**CONTEXTO:**\n"
+        f"- Ciclo: {inputs['ciclo']}\n"
+        f"- Contexto sociocultural: {inputs['contexto']}\n"
+        f"- Duración: {inputs['duracion']} (1 hora = 45 minutos)\n\n"
+        
+        "**ENFOQUES:**\n"
+        f"- Enfoque Transversal: {inputs['enfoque_transversal']}\n"
+        f"- Competencia Transversal: {inputs['competencia_transversal']}\n\n"
+        
+        "**RECURSOS:**\n"
         f"- Materiales disponibles: {inputs['materiales']}\n\n"
+        
+        "**IMPORTANTE - RESPETA LA DURACIÓN ESPECIFICADA:**\n"
+        f"El docente ha indicado que la sesión debe durar exactamente: {inputs['duracion']}\n"
+        "- Cada hora pedagógica = 45 minutos.\n"
+        "- Ajusta TODAS las actividades, tiempos y secuencias metodológicas a esta duración específica.\n"
+        "- El campo 'horasClase' en el JSON debe reflejar exactamente el número de horas indicado.\n"
+        "- La 'distribucionHoras' debe desglosar minutos específicos: Inicio (15-20%), Desarrollo (60-70%), Cierre (10-15%).\n"
+        "- Si la duración es corta (1 hora = 45 min), prioriza actividades esenciales.\n"
+        "- Si la duración es larga (2-3 horas = 90-135 min), incluye más práctica y profundización.\n"
+        "- NO propongas actividades que excedan el tiempo disponible.\n\n"
+        
+        f"**CONTEXTUALIZACIÓN AL ENTORNO {inputs['contexto'].upper()}:**\n"
+        "- TODAS las situaciones problemáticas, ejemplos y actividades DEBEN estar relacionadas con este contexto.\n"
+        "- Usa vocabulario, elementos y situaciones propias de este entorno sociocultural.\n"
+        "- Las actividades deben ser significativas y pertinentes para estudiantes de este contexto.\n\n"
     )
 
     # --- Información curricular recuperada ---
@@ -231,33 +323,6 @@ def build_prompt(inputs, retrieved_docs):
 
     return prompt
 
-# def generate_lesson(session_id, message):
-#     inputs = parse_teacher_message(message)
-#     query_text = f"{inputs['tema']} {inputs['competencia']} {inputs['grado']}"
-    
-#     embed_fn.document_mode = False
-#     result = knowledge_db.query(query_texts=[query_text], n_results=3)
-#     retrieved_docs = result["documents"][0] if result["documents"] else []
-
-#     prompt = build_prompt(inputs, retrieved_docs)
-#     response = client.models.generate_content(
-#         model="gemini-2.0-flash",
-#         contents=prompt
-#     )
-
-#     raw_output = response.text
-
-#     # Validar que sea JSON
-#     try:
-#         lesson_json = json.loads(raw_output)
-#     except json.JSONDecodeError:
-#         # Si Gemini devuelve texto no válido, lo encapsulamos
-#         lesson_json = {"error": "El modelo no devolvió un JSON válido", "raw": raw_output}
-
-#     save_message(session_id, "user", message)
-#     save_message(session_id, "bot", json.dumps(lesson_json, ensure_ascii=False))
-#     return lesson_json
-
 def generate_lesson(session_id, message):
     """
     Genera una sesión de aprendizaje considerando todos los campos del mensaje docente.
@@ -270,11 +335,12 @@ def generate_lesson(session_id, message):
 
     # --- Construir texto de búsqueda (usando todos los campos disponibles) ---
     query_parts = [
-        inputs.get("tema", ""),
-        inputs.get("competencia", ""),
+        inputs.get("titulo", ""),
+        inputs.get("competencias", ""),
+        inputs.get("capacidades", ""),
         inputs.get("grado", ""),
+        inputs.get("ciclo", ""),
         inputs.get("contexto", ""),
-        inputs.get("duracion", ""),
         inputs.get("materiales", "")
     ]
     query_text = " ".join(part for part in query_parts if part).strip()

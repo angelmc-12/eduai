@@ -1,0 +1,145 @@
+
+EJEMPLOS DE PROMPTS
+💡 CONSTRUYAMOS JUNTOS UN PROMPT EFECTIVO:
+Paso 1 - Básico: "Crea una actividad de matemáticas"
+Paso 2 - Mejor: "Soy docente de 6to grado. Crea una actividad de matemáticas sobre fracciones"
+Paso 3 - Completo: "Soy docente de 6to grado de Lima, Perú. Actúa como un experto educador peruano y crea una actividad de matemáticas sobre suma de fracciones que dure 20 minutos, sea apropiada para estudiantes de 11-12 años e incluya instrucciones claras."
+🎯 AHORA TU PROMPT PERSONALIZADO: Completa esta plantilla con tu información:
+"Soy docente de 6to grado de Lima, Perú. Actúa como un experto educador peruano y crea _________ sobre _________ que dure ____ minutos, sea apropiada para estudiantes de 11-12 años e incluya _________."
+
+✅ PRUÉBALO: Copia tu prompt completo y úsalo en Copilot.
+
+💡 CONSEJO PEDAGÓGICO: Para atender mejor la diversidad en tu aula, prueba agregar esta frase al final de tu prompt: "Adapta la actividad para estudiantes que necesitan más apoyo y para estudiantes que están listos para un mayor desafío." La IA te ayudará a crear material diferenciado según el nivel de cada estudiante.
+
+🔧 PERSONALIZACIÓN ADICIONAL: Recuerda que siempre puedes agregar más detalles específicos como el área curricular, competencias del CNEB, tipo de evaluación, o características particulares de tus estudiantes para obtener respuestas aún más precisas.
+🤖 Prompt 
+semana les comparto una nueva forma de aprovechar la IA: no solo para diseñar sesiones, sino también para organizar nuestro tiempo de planificación. Se acercan las vacaciones escolares, y es una gran oportunidad para planificar con calma, avanzar con pendientes y seguir creciendo como profesionales.
+
+💡 La IA también puede ayudarte a planificar pensando en que cada estudiante aprende a un ritmo distinto. Asegúrate de incluir tiempo en tu organización para adaptar materiales para quienes necesitan más apoyo, y también para quienes están listos para mayores retos.
+"Actúa como un especialista en gestión del tiempo docente en el contexto educativo peruano, con experiencia en escuelas públicas de Lima Metropolitana. Soy docente de 6to grado de primaria y me encuentro en el periodo de vacaciones escolares. Necesito una propuesta detallada para organizar mi semana de planificación (de lunes a viernes).
+
+•⁠  ⁠Espacios para planificar sesiones y unidades de aprendizaje alineadas con el CNEB.
+•⁠  ⁠⁠Tiempo para revisar evidencias de aprendizaje y reflexionar sobre el progreso de mis estudiantes.
+•⁠  ⁠⁠Tiempo específico para preparar materiales diferenciados según los distintos niveles de aprendizaje de mis estudiantes.
+•⁠  ⁠⁠Momentos dedicados a mi bienestar personal y a mi desarrollo profesional.
+
+ La propuesta debe ser equilibrada, realista y adaptable, considerando tanto mis responsabilidades laborales como personales."
+Organiza la información brindada en un recuadro planificador. Considerando que el tiempo de trabajo en mi escuela es Lunes en la mañana, martes en la tarde, miércoles en la mañana, jueves en la tarde. Viernes tenemos visita de estudios a las Lomas de Amancaes
+_"Actúa como un experto docente peruano de 6to grado de Lima Metropolitana. Elabora una sesión de aprendizaje para el área de [ÁREA] según el currículo nacional de educación básica (CNEB) peruano que:
+• Dure [X] minutos • Sea apropiada para estudiantes de 11-12 años • Utilice la competencia "[COMPETENCIA]" y la capacidad "[CAPACIDAD]" • Sea sobre [TEMA] • Incluya: preparación de la actividad, desarrollo de la experiencia (inicio, desarrollo, cierre), y reflexiones del docente • Incluya criterios de evaluación e instrucciones claras"_
+🔧 CLAVE DEL ÉXITO: Personalicen el prompt según lo que necesiten y luego sigan interactuando con la IA para refinar la respuesta hasta obtener el resultado que buscan.
+
+💡 REFINAMIENTO: Una vez que tengan la sesión, pueden seguir pidiendo a la IA que haga ajustes. Por ejemplo, se puede pedir "Me gustaría adaptar esta sesión para que incluya más trabajo colaborativo y tenga actividades diferenciadas para estudiantes que necesitan más apoyo y para estudiantes que están listos para un mayor desafío."
+
+💻 RECUERDEN: Pueden usar este prompt en Copilot, ChatGPT, o cualquier IA de su preferencia.
+
+📚 ¿Dudas? Compártelas por este chat y las solucionaremos en grupo.
+Conectemos con las familias usando IA 📚
+¡Hola colegas! Soy Giovanna Arredondo, docente de 6to grado de la IE Fernando Carbajal Segura. ¿Cómo va este retorno a clases? Sabemos que involucrar a las familias en el aprendizaje de los chicos es clave para el éxito, pero a veces nos cuesta encontrar las palabras exactas para motivarlos. ¡La buena noticia es que la IA puede ser nuestra aliada perfecta para esto!
+
+Les comparto un ejemplo de prompt que pueden utilizar para fomentar el acompañamiento en lectura:
+📝 PROMPT:
+_"Actúa como un experto docente peruano de 6to grado y elabora un comunicado para los padres de familia sobre la importancia de leer junto a sus hijos en casa que:
+• Explique por qué leer juntos fortalece el aprendizaje y el vínculo familiar
+• Proporcione 3 estrategias sencillas para hacer la lectura divertida en casa
+• Incluya consejos prácticos para familias con poco tiempo
+• Utilice un lenguaje cálido y motivador
+• Genere confianza e invite a participar sin presionar
+• Se pueda enviar por WhatsApp y contenga emojis"_
+🌟 CONSEJO PEDAGÓGICO: Para atender la diversidad de niveles en su aula, pueden agregar al final del prompt: "Incluye recomendaciones de estrategias diferenciadas que los padres puedan hacer con sus hijos, algunas para estudiantes que están desarrollando fluidez lectora y otras para estudiantes que ya leen con mayor facilidad.”
+
+🔄 ADAPTACIONES 
+El mismo pedido se puede adaptar para otros casos, como por ejemplo: crear rutinas de estudio en casa, acompañar tareas de matemáticas, motivar la escritura creativa en familia, o establecer límites con dispositivos electrónicos
+
+💡 REFINAMIENTO: Después de obtener el comunicado, pueden pedir ajustes como: "Hazlo más breve" o "Incluye un ejemplo específico de actividad de lectura para hacer en 10 minutos"
+
+📚 ¿QUÉ ÁREA ESPECÍFICA LES GUSTARÍA QUE LOS PADRES APOYEN MÁS EN CASA? Compartanlo por el grupo 😀
+¡Hola colegas! Soy Giovanna Arredondo, docente de 6to grado de la IE Fernando Carbajal Segura. Esta semana quiero compartirles cómo diseñar juegos didácticos que puedan entusiasmar a nuestros estudiantes usando la IA.
+
+🎯 PROMPT BASE:
+_”Actúa como un experto docente peruano de 6to grado. Diseña un juego educativo para el área de [ÁREA] sobre [TEMA] que:
+Dure entre 15-20 minutos
+Use materiales simples disponibles en el aula (papel y plumones)
+Tenga instrucciones claras paso a paso
+Sea apropiado para estudiantes de 11-12 años
+Incluya 3 niveles de dificultad progresiva
+Fomente el trabajo colaborativo
+Termine con una reflexión grupal sobre lo aprendido"_
+💡 EJEMPLO PRÁCTICO: Para matemáticas sobre fracciones, completarían así: "...área de [Matemáticas] sobre [suma de fracciones]..."
+
+✨ REFINAMIENTO: Para atender la diversidad del aula, pueden agregar: "Adapta el juego para incluir apoyo para estudiantes que están desarrollando el concepto y desafíos adicionales para quienes ya dominan el tema"
+
+🔄 OTROS JUEGOS QUE PUEDEN CREAR:
+Comunicación: juegos de roles para practicar diálogos
+Ciencia: búsquedas del tesoro sobre el cuerpo humano
+Personal Social: dinámicas sobre valores y convivencia
+
+📚 ¿Qué juego educativo podrían utilizar en sus clases? ¡Compartan por aquí!
+🎯 PROMPT BASE: _"Actúa como un docente experto peruano de 6to grado. Crea una evaluación formativa sobre [TEMA] del área de [ÁREA] que:
+Dure 20-30 minutos
+Incluya 5-6 preguntas variadas (básicas, intermedias y avanzadas)
+Sea apropiada para estudiantes de 11-12 años
+Alinee con las competencias del CNEB [AGREGAR COMPETENCIAS]
+Incluya las respuestas correctas y criterios de evaluación"_
+
+💡 EJEMPLO: Para evaluar fracciones en Matemáticas, solo reemplacen "[TEMA]" por "operaciones con fracciones" y "[ÁREA]" por "Matemáticas". La IA generará preguntas, y ejercicios listos para usar.
+🌟 TIP: También pueden usar la IA para crear rutas de trabajo vinculadas a la evaluación. Por ejemplo, pueden pedirle: “Crea 3 rutas de trabajo sobre [TEMA] del área de [ÁREA] que contenga actividades de refuerzo para estudiantes que necesiten consolidar conceptos básicos, actividades de práctica para estudiantes en proceso, y actividades de profundización para estudiantes que ya dominan el tema” 
+
+✅ PRUÉBENLO: Copien el prompt, personalicen los corchetes con su tema de la semana y vean qué evaluación les genera. Pueden pedirle ajustes y luego adaptar el resultado final según las necesidades específicas de sus estudiantes.
+Hola colegas! Soy Giovanna Arredondo, docente de 6to grado de la IE Fernando Carbajal Segura. Esta semana les traigo cómo crear activaciones dinámicas con IA.
+
+🎯 PROMPT BASE:
+"Crea 3 actividades de activación de saberes previos de 3-5 minutos para iniciar una clase de [ÁREA] sobre [TEMA] en 6to grado. Deben ser dinámicas, ayudar a conectar con conocimientos anteriores y preparar para el nuevo aprendizaje."
+
+💡 EJEMPLO: Para fracciones en Matemáticas, la IA podría sugerir: un reto rápido de dividir chocolates entre amigos, preguntas sobre cuándo usan fracciones en casa, o un juego de "encuentra la fracción" con objetos del salón.
+✨ REFINAMIENTO: Para responder a la diversidad en el aula, se puede añadir:
+"Ajusta las actividades para que incluya apoyo extra a los estudiantes que todavía están aprendiendo el concepto, y propón retos adicionales para quienes ya lo dominan.”
+
+✅ PRUÉBENLO: Copien el prompt, personalicen los corchetes con el tema de la semana y vean las actividades que propone. Recuerden que pueden ajustarlas y adaptarlas según lo que necesiten sus estudiantes.
+📚 ¿Qué actividades de activación les funcionaron mejor? Compartan aquí.
+Actúa como un experto docente peruano de sexto grado de educación primaria de la escuela 6015 de Villa María del Triunfo, en Lima. Crea una sesión de aprendizaje para el área de MATEMÁTICA sobre diagrama de árbol de probabilidades. Las actividades y procesos deben estar relacionados al contexto de “Participamos en las olimpiadas escolares”. La sesión debe considerar que: - Dure 90 minutos - Considere las capacidades: • Representa datos con gráficos y medidas estadísticas o probabilísticas. • Comunica la comprensión de los conceptos estadísticos y probabilísticos. • Usa estrategias y procedimientos para recopilar y procesar datos. • Sustenta conclusiones o decisiones con base en la información obtenida..; correspondientes a la competencia Resuelve problemas de gestión de datos e incertidumbre Esta sesión debe considerar las siguientes secciones: • Preparación de la actividad: desarrollo de la ACTIVIDAD (inicio, considerar la motivación, recojo de saberes previos, presentación del propósito y criterios de evaluación; desarrollo, que incluya los procesos MATEMÁTICOS: • comprensión del problema • Búsqueda de estrategias • Representación (de lo grafico a lo simbólico) • La formalización • La reflexión • la Transferencia. , considerando lo siguiente: Las páginas 86 a 89 del Texto de matemática 6 – MINEDU: Jugamos con dados y la probabilidad Evalúa tus aprendizajes teniendo en cuenta los criterios 
+• Presentar la sesión organizada en una tabla con encabezamientos y títulos: 
+TABLA 1: - Primera fila: columna 1: Título de la sesión: ; columna 2: “Escribe el título de la sesión” 
+                   Segunda fila: columna 1: Nombre de la Docente: ; Columna 2: escribe el nombre “Ursula Arnao  
+                   Franco”
+                   Tercera fila: columna 1: Grado y sección: ; columna 2: 6° F; columna 3: Fecha: columna 4: escribe la  fecha actual. 
+TABLA 2: fila con tres columnas: - competencias y capacidades: - criterios de evaluación - Evidencias de aprendizaje: Sexta fila: - propósito de la sesión: 
+Séptima fila, con dos columnas: - Materiales para el desarrollo de la sesión - Recursos para la preparación de la sesión: 
+TABLA 3: fila: momentos de la sesión: 
+fila: inicio, 
+fila: desarrollo 
+fila: cierre 
+Al final, fuera de la tabla: - reflexiones del docente.
+_”Actúa como un experto docente peruano de 6to grado. Diseña un juego educativo para el área de Arte y cultura sobre celebración de la Canción Criolla que:
+Dure entre 30-45 minutos
+Use materiales simples disponibles en el aula y otros que los estudiantes puedan traer de casa
+Tenga instrucciones claras paso a paso
+Sea apropiado para estudiantes de 11-12 años
+Incluya 3 niveles de dificultad progresiva
+Fomente el trabajo colaborativo
+Termine con una reflexión grupal sobre lo aprendido"
+💡 EJEMPLO PRÁCTICO: Adivina la canción o cantante, sopa de letras de platos criollos peruanos, rompecabezas de cantantes de música criolla peruanos 
+
+✨ REFINAMIENTO: Para atender la diversidad del aula, pueden agregar: "Adapta el juego para incluir apoyo para estudiantes que están desarrollando el concepto y desafíos adicionales para quienes ya dominan el tema"
+
+ninos3d2020
+Actúa como un experto docente peruano de sexto grado de educación primaria de la escuela 6015 de Villa María del Triunfo, en Lima. Crea una sesión de aprendizaje para el área de PERSONAL SOCIAL sobre Poderes del Estado Peruano. Las actividades y procesos deben estar relacionados al contexto de “elegimos con democracia. La sesión debe considerar que: - Dure 90 minutos - Considere las capacidades: 
+• Representa datos con gráficos y medidas estadísticas o probabilísticas. 
+• Comunica la comprensión de los conceptos estadísticos y probabilísticos. 
+• Usa estrategias y procedimientos para recopilar y procesar datos. 
+• Sustenta conclusiones o decisiones con base en la información obtenida; correspondientes a la competencia Convive y participa en la búsqueda del bien común.
+ Esta sesión debe considerar las siguientes secciones: 
+• Preparación de la actividad: desarrollo de la ACTIVIDAD (inicio, considerar la motivación, recojo de saberes previos, presentación del propósito y criterios de evaluación; desarrollo, que incluya los procesos didácticos: • planteamiento del problema • Búsqueda de estrategias • Representación (de lo grafico a lo simbólico) • La formalización • La reflexión • la Transferencia. , considerando lo siguiente: Las páginas 86 a 89 del Texto de matemática 6 – MINEDU: Jugamos con dados y la probabilidad Evalúa tus aprendizajes teniendo en cuenta los criterios 
+• Presentar la sesión organizada en una tabla con encabezamientos y títulos: 
+TABLA 1: - Primera fila: columna 1: Título de la sesión: ; columna 2: “Escribe el título de la sesión” 
+                   Segunda fila: columna 1: Nombre de la Docente: ; Columna 2: escribe el nombre “Ursula Arnao  
+                   Franco”
+                   Tercera fila: columna 1: Grado y sección: ; columna 2: 6° F; columna 3: Fecha: columna 4: escribe la  fecha actual. 
+TABLA 2: fila con tres columnas: - competencias y capacidades: - criterios de evaluación - Evidencias de aprendizaje: Sexta fila: - propósito de la sesión: 
+Séptima fila, con dos columnas: - Materiales para el desarrollo de la sesión - Recursos para la preparación de la sesión: 
+TABLA 3: fila: momentos de la sesión: 
+fila: inicio, 
+fila: desarrollo 
+fila: cierre 
+Al final, fuera de la tabla: - reflexiones del docente.
+	
