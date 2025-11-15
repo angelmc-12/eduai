@@ -323,6 +323,46 @@ def build_prompt(inputs, retrieved_docs):
 
     return prompt
 
+
+def clean_model_output(raw: str):
+    """Intenta limpiar outputs de modelos que vienen como texto con code-fences
+    o texto extra y devuelve (obj, cleaned_string).
+    - Si puede parsear JSON devuelve el objeto y la cadena usada.
+    - Si no puede, devuelve (None, cleaned_candidate).
+    """
+    if not isinstance(raw, str):
+        return None, None
+
+    s = raw.strip()
+
+    # Remover code fences como ```json ... ``` o ``` ... ```
+    m = re.match(r"^```(?:json)?\s*([\s\S]*)\s*```$", s, re.IGNORECASE)
+    if m:
+        s = m.group(1).strip()
+
+    # A veces vienen con comillas extra o texto antes/ despues; buscar primer '{' y último '}'
+    first = s.find('{')
+    last = s.rfind('}')
+    if first != -1 and last != -1 and last > first:
+        candidate = s[first:last+1]
+    else:
+        candidate = s
+
+    # Intentar cargar JSON directamente
+    try:
+        obj = json.loads(candidate)
+        return obj, candidate
+    except Exception:
+        # Intentar otras limpiezas comunes
+        candidate2 = candidate.strip().strip('"')
+        candidate2 = candidate2.replace('\n', '\\n')
+        try:
+            obj = json.loads(candidate2)
+            return obj, candidate2
+        except Exception:
+            # No se pudo parsear
+            return None, candidate
+
 def generate_lesson(session_id, message):
     """
     Genera una sesión de aprendizaje considerando todos los campos del mensaje docente.
@@ -360,16 +400,26 @@ def generate_lesson(session_id, message):
     )
 
     raw_output = response.text
-
-    # --- Validar y formatear el JSON devuelto ---
-    try:
-        lesson_json = json.loads(raw_output)
-    except json.JSONDecodeError:
-        # Si el modelo devuelve texto no válido, lo encapsulamos para debugging
-        lesson_json = {"error": "El modelo no devolvió un JSON válido", "raw": raw_output}
+    # --- Limpiar y validar el JSON devuelto ---
+    parsed, cleaned_candidate = clean_model_output(raw_output)
+    if parsed is not None:
+        lesson_json = parsed
+    else:
+        # Intento fallback: cargar el texto tal cual
+        try:
+            lesson_json = json.loads(raw_output)
+        except Exception:
+            # No se pudo parsear; devolver estructura de error incluyendo candidato limpio
+            lesson_json = {
+                "error": "El modelo no devolvió un JSON válido",
+                "raw": raw_output,
+                "cleaned_candidate": cleaned_candidate
+            }
 
     # --- Guardar historial de conversación ---
+    # Guardar entradas y salidas para debugging: inputs, raw model output y resultado final
     save_message(session_id, "user", json.dumps(inputs, ensure_ascii=False))
+    save_message(session_id, "bot_raw", raw_output)
     save_message(session_id, "bot", json.dumps(lesson_json, ensure_ascii=False))
 
     return lesson_json
