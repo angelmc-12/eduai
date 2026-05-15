@@ -60,7 +60,7 @@ class GeminiEmbeddingFunction(chromadb.EmbeddingFunction):
     def __call__(self, input):
         task = "retrieval_document" if self.document_mode else "retrieval_query"
         response = client.models.embed_content(
-            model="models/text-embedding-004",
+            model="models/gemini-embedding-001",
             contents=input,
             config=types.EmbedContentConfig(task_type=task),
         )
